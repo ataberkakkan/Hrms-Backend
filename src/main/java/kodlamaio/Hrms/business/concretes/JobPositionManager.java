@@ -1,10 +1,7 @@
 package kodlamaio.Hrms.business.concretes;
 
 import kodlamaio.Hrms.business.abstracts.JobPositionService;
-import kodlamaio.Hrms.core.utilities.results.DataResult;
-import kodlamaio.Hrms.core.utilities.results.Result;
-import kodlamaio.Hrms.core.utilities.results.SuccessDataResult;
-import kodlamaio.Hrms.core.utilities.results.SuccessResult;
+import kodlamaio.Hrms.core.utilities.results.*;
 import kodlamaio.Hrms.dataAccess.abstracts.JobPositionDao;
 import kodlamaio.Hrms.entities.concretes.JobPosition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +21,13 @@ public class JobPositionManager implements JobPositionService {
 
     @Override
     public Result add(JobPosition jobPosition) {
-        this.jobPositionDao.save(jobPosition);
-        return new SuccessResult("İş pozisyonu eklendi.");
+        if(!this.jobPositionDao.existsByJobTitle(jobPosition.getJobTitle())){
+            this.jobPositionDao.save(jobPosition);
+            return new SuccessResult("Başarıyla eklendi");
+        }else{
+            return new ErrorResult("Bu iş pozisyonu daha önce eklendi");
+        }
     }
-
     @Override
     public DataResult<List<JobPosition>> getAll() {
         return new SuccessDataResult<List<JobPosition>>
