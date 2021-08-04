@@ -1,10 +1,7 @@
 package kodlamaio.Hrms.business.concretes;
 
 import kodlamaio.Hrms.business.abstracts.JobSeekerService;
-import kodlamaio.Hrms.core.utilities.results.DataResult;
-import kodlamaio.Hrms.core.utilities.results.Result;
-import kodlamaio.Hrms.core.utilities.results.SuccessDataResult;
-import kodlamaio.Hrms.core.utilities.results.SuccessResult;
+import kodlamaio.Hrms.core.utilities.results.*;
 import kodlamaio.Hrms.dataAccess.abstracts.JobSeekersDao;
 import kodlamaio.Hrms.entities.concretes.JobSeekers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +21,15 @@ public class JobSeekerManager implements JobSeekerService {
 
     @Override
     public Result add(JobSeekers jobSeekers) {
-        this.jobSeekersDao.save(jobSeekers);
-        return new SuccessResult("Kullanıcı Eklendi");
+        if (this.jobSeekersDao.existsByNationalityId(jobSeekers.getNationalityId())){
+            return new ErrorResult("Bu Tc Kimlik numarası kullanımda");
+        }else if (this.jobSeekersDao.existsByEmail(jobSeekers.getEmail())){
+            return new ErrorResult("Bu mail adresi kullanılıyor");
+        }else{
+            this.jobSeekersDao.save(jobSeekers);
+            return new SuccessResult("Kullanıcı eklendi");
+        }
+
     }
 
     @Override
