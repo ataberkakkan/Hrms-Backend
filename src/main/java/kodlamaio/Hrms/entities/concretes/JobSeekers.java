@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -26,4 +25,22 @@ public class JobSeekers extends User{
 
     @Column(name = "nationality_id")
     private String nationalityId;
+
+    @OneToMany(mappedBy="jobSeeker")
+    private List<JobExperience> jobExperiences;
+
+    @OneToMany(mappedBy="jobSeeker")
+    private List<EducationalBackground> educationalBackgrounds;
+
+    @ManyToMany(mappedBy="jobSeekers")
+    private List<Skill> jobSeekerSkills;
+
+    @OneToMany(mappedBy="jobSeeker")
+    private List<Image> images;
+
+    @ManyToMany(mappedBy="jobSeekers")
+    private List<Language> languages;
+
+    @OneToOne(mappedBy="jobSeeker")
+    private JobSeekerCv jobSeekerCv;
 }
