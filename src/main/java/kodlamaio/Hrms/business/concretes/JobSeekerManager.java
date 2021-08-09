@@ -1,6 +1,7 @@
 package kodlamaio.Hrms.business.concretes;
 
 import kodlamaio.Hrms.business.abstracts.JobSeekerService;
+import kodlamaio.Hrms.core.abstracts.EmailValidationService;
 import kodlamaio.Hrms.core.utilities.results.*;
 import kodlamaio.Hrms.dataAccess.abstracts.JobSeekersDao;
 import kodlamaio.Hrms.entities.concretes.JobSeekers;
@@ -11,13 +12,14 @@ import java.util.List;
 @Service
 public class JobSeekerManager implements JobSeekerService {
 
+    private EmailValidationService emailValidationService;
     private JobSeekersDao jobSeekersDao;
 
     @Autowired
-    public JobSeekerManager(JobSeekersDao jobSeekersDao) {
+    public JobSeekerManager(EmailValidationService emailValidationService, JobSeekersDao jobSeekersDao) {
+        this.emailValidationService = emailValidationService;
         this.jobSeekersDao = jobSeekersDao;
     }
-
 
     @Override
     public Result add(JobSeekers jobSeekers) {
@@ -25,6 +27,8 @@ public class JobSeekerManager implements JobSeekerService {
             return new ErrorResult("Bu Tc Kimlik numarası kullanımda");
         }else if (this.jobSeekersDao.existsByEmail(jobSeekers.getEmail())){
             return new ErrorResult("Bu mail adresi kullanılıyor");
+        }else if (!this.emailValidationService.isValid(jobSeekers.getEmail())){
+            return new ErrorResult("Girdiğiniz E-Mail adresi hatalı");
         }else{
             this.jobSeekersDao.save(jobSeekers);
             return new SuccessResult("Kullanıcı eklendi");
